@@ -4,6 +4,8 @@
 
 本项目参考 `pp-plus` 的 GitHub Actions → GHCR 发布流程。提交到 `main` 后先运行 Go 测试和静态检查，再构建 Linux amd64 镜像，发布 `main`、`latest` 和 `sha-<完整提交号>` 标签。服务器安装下面的 systemd timer 后，每五分钟拉取一次指定标签并更新容器；镜像内容未变化时不会重新创建容器。
 
+CI 中的页面刷新测试使用模拟收信结果，避免使用测试账号连接真实 Apple 服务；真实账号的收信验证在部署后通过面板完成。
+
 ## 首次部署到 Linux
 
 需要 Docker Engine、Docker Compose 插件、Git 和 OpenSSL。以下命令在服务器上执行，统一使用 root 的 Docker 登录及 systemd 环境。

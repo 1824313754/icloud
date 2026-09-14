@@ -94,3 +94,25 @@
 - `progress.md`：追加远程首轮构建和回滚复验的真实结果。
 - `.codex-deploy/github-docker-20260914/`：保存失败、复验和回滚证据。
 - 回滚方式：对本轮诊断提交执行 `git revert <提交号>`；完整部署回滚仍以 `1a49ef9f42be73f583bf9ed2e960c76529c955bb` 为基线。
+
+## 2026-09-14 - Task: 修复阻塞 Docker 发布的外部网络依赖测试
+
+### What was done
+
+- 从第二次 GitHub Actions 的错误注释确认，浏览器取码页刷新测试用虚构邮箱触发了真实 IMAP 同步，在 GitHub 环境收到 502，导致测试失败。
+- 仅为该测试设置项目已有的收信模拟入口，明确返回空邮件结果，继续验证等待新邮件、显示验证码及停止自动刷新等原有断言。
+- 应用的登录、收信、网络处理和并发实现均保持原样。
+
+### Testing
+
+- `go test ./internal/app -run '^TestMailboxBrowserCodeAndContentAutoRefresh$' -count=10`：通过，用时 5.387s。
+- Linux 容器挂载修正后的测试文件执行 `go test ./...`：通过，`internal/app` 用时 27.274s。
+- `go vet ./...` 通过；Go 格式核对通过，保留原文件 CRLF 行尾和编码。
+
+### Notes
+
+- `internal/app/server_test.go`：仅修改一个测试的服务实例类型并注入空收信结果，实际差异为新增 3 行。
+- `docs/docker-deploy.md`：补充 CI 收信模拟与真实账号验证的区别。
+- `progress.md`：追加 CI 根因和修复验证记录。
+- `.codex-deploy/github-docker-20260914/server_test.original.go`：保留测试文件修改前的完整字节。
+- 回滚方式：对本轮测试修复提交执行 `git revert <提交号>`；完整源码回滚基线不变。

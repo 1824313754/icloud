@@ -3879,7 +3879,10 @@ func TestMailboxBrowserCodeAndContentAutoRefresh(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	handler := NewServer(Config{}, store, discardLogger())
+	handler := NewServer(Config{}, store, discardLogger()).(*Server)
+	handler.syncCodeMailboxBatch = func(context.Context, LoginState, []Mailbox, time.Time, string, int) (map[string][]ICloudSyncedMessage, error) {
+		return map[string][]ICloudSyncedMessage{}, nil
+	}
 	codePath := "/api/v1/access/" + url.PathEscape(mailbox.APIToken) + "/mailboxes/" + url.PathEscape(mailbox.Email) + "/code"
 	contentPath := "/api/v1/access/" + url.PathEscape(mailbox.APIToken) + "/mailboxes/" + url.PathEscape(mailbox.Email) + "/content"
 
