@@ -1,0 +1,11 @@
+[Unit]
+Description=Pull and apply the latest icloud Docker image
+Requires=docker.service
+After=docker.service network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+WorkingDirectory=/opt/icloud
+ExecStart=/bin/sh /opt/icloud/deploy/update-docker.sh
+TimeoutStartSec=15min

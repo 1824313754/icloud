@@ -132,6 +132,12 @@ Linux 服务器建议使用 systemd 托管并设置 `Restart=on-failure` 或 `Re
 - 在线更新只读取 GitHub `latest release` 或 `update_manifest_url` 指向的最新版本，不要求用户逐个中间版本升级；从任意旧版本点击更新都会直接更新到最新 Release。
 - `data_path`、`config.json`、Apple 登录态、Cookie、取码缓存和运行数据不属于 Release 资产，更新时不覆盖。
 
+## Docker 镜像部署与自动更新
+
+推送到本仓库 `main` 分支后，GitHub Actions 自动测试并发布 `ghcr.io/1824313754/icloud:main`、`latest` 和提交号标签。服务器可通过 systemd 定时拉取新镜像并更新容器，运行数据保存在独立数据卷中。
+
+首次部署、自动更新、备份和版本回滚步骤见 [Docker 部署说明](docs/docker-deploy.md)。
+
 ## 本地运行
 
 ```powershell

@@ -1,0 +1,16 @@
+services:
+  icloud:
+    image: ghcr.io/1824313754/icloud:${IMAGE_TAG:-main}
+    build:
+      context: .
+    restart: unless-stopped
+    environment:
+      IPM_API_KEY: "${IPM_API_KEY:?set IPM_API_KEY in .env}"
+      IPM_PUBLIC_BASE_URL: "${IPM_PUBLIC_BASE_URL:-http://127.0.0.1:8787}"
+    ports:
+      - "${BIND_IP:-127.0.0.1}:${PORT:-8787}:8787"
+    volumes:
+      - icloud-data:/data
+
+volumes:
+  icloud-data:

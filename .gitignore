@@ -22,6 +22,9 @@ verification-code-speedup.md
 *.sqlite3
 
 # Local config / secrets
+.env
+.env.*
+!.env.example
 .secrets/
 config.json
 config.local.json
