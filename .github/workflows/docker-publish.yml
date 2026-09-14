@@ -32,7 +32,17 @@ jobs:
 
       - name: Test and vet
         run: |
-          go test ./...
+          if go test ./... > "$RUNNER_TEMP/go-test.log" 2>&1; then
+            cat "$RUNNER_TEMP/go-test.log"
+          else
+            cat "$RUNNER_TEMP/go-test.log"
+            message=$(cat "$RUNNER_TEMP/go-test.log")
+            message="${message//'%'/'%25'}"
+            message="${message//$'\r'/'%0D'}"
+            message="${message//$'\n'/'%0A'}"
+            printf '::error title=Go tests failed::%s\n' "$message"
+            exit 1
+          fi
           go vet ./...
 
       - name: Log in to GitHub Container Registry

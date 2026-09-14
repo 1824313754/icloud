@@ -73,3 +73,24 @@
 - `.codex-deploy/github-docker-20260914/`：保存参考文件原始哈希、验证输出、部署差异和可执行回滚脚本，属于本机产物，不提交。
 - 代码回滚点：本轮变更前提交 `1a49ef9f42be73f583bf9ed2e960c76529c955bb`；使用 `git revert <本轮部署提交号>` 创建反向提交。
 - 运行版本回滚：暂停 `icloud-image-update.timer`，将 `.env` 的 `IMAGE_TAG` 改为既有 `sha-<提交号>`，执行 `sh deploy/update-docker.sh`，保留数据卷。
+
+## 2026-09-14 - Task: 核对首次发布并补充 CI 失败诊断
+
+### What was done
+
+- 已将部署提交 `b769be618dafd0b080cdc01fc81347b5072ae363` 推送到指定仓库 `main`。
+- 首次 Actions 在测试步骤失败，公开页面仅显示退出码；将 Go 测试失败输出写入 Actions 注释，以便直接定位具体失败，测试失败仍会阻止镜像发布。
+
+### Testing
+
+- Linux 构建容器实际执行 `go test ./...` 通过，`internal/app` 用时 27.521s。
+- 回滚脚本已在独立克隆上执行；源码树恢复为原始提交，新增镜像发布流程被移除。
+- 回滚副本首轮测试出现 `TestMailboxVisualRefreshKeepsBackgroundSyncAliveAfterFastResponse` 临时目录清理失败；完整复验通过，用时 34.878s，未改动业务源码或测试。
+- 参考仓库仅作只读参考；正式工作区和运行数据保持部署状态。
+
+### Notes
+
+- `.github/workflows/docker-publish.yml`：补充失败时的具体测试输出，不改变测试通过条件。
+- `progress.md`：追加远程首轮构建和回滚复验的真实结果。
+- `.codex-deploy/github-docker-20260914/`：保存失败、复验和回滚证据。
+- 回滚方式：对本轮诊断提交执行 `git revert <提交号>`；完整部署回滚仍以 `1a49ef9f42be73f583bf9ed2e960c76529c955bb` 为基线。
